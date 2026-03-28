@@ -14,23 +14,27 @@ export interface TableData {
 
 interface TableGridProps {
   tables?: TableData[];
+  onTableClick?: (table: TableData) => void;
 }
 
+const DEFAULT_TABLES: TableData[] = [
+  { id: 1, name: 'Table 01', type: 'Pool', status: 'available' },
+  { id: 2, name: 'Table 02', type: 'Carom', status: 'playing', elapsedSeconds: 1245, startTime: new Date(Date.now() - 1245000), billAmount: 45.50 },
+  { id: 3, name: 'Table 03', type: 'Pool', status: 'available' },
+  { id: 4, name: 'Table 04', type: 'Pool', status: 'reserved' },
+  { id: 5, name: 'Table 05', type: 'Carom', status: 'playing', elapsedSeconds: 2847, startTime: new Date(Date.now() - 2847000), billAmount: 98.75 },
+  { id: 6, name: 'Table 06', type: 'Pool', status: 'available' },
+  { id: 7, name: 'Table 07', type: 'Pool', status: 'maintenance' },
+  { id: 8, name: 'Table 08', type: 'Carom', status: 'playing', elapsedSeconds: 567, startTime: new Date(Date.now() - 567000), billAmount: 19.99 },
+  { id: 9, name: 'Table 09', type: 'Pool', status: 'available' },
+  { id: 10, name: 'Table 10', type: 'Pool', status: 'reserved' },
+  { id: 11, name: 'Table 11', type: 'Carom', status: 'available' },
+  { id: 12, name: 'Table 12', type: 'Pool', status: 'playing', elapsedSeconds: 3456, startTime: new Date(Date.now() - 3456000), billAmount: 125.30 },
+];
+
 export const TableGrid: React.FC<TableGridProps> = ({
-  tables = [
-    { id: 1, name: 'Table 01', type: 'Pool', status: 'available' },
-    { id: 2, name: 'Table 02', type: 'Carom', status: 'playing', elapsedSeconds: 1245, startTime: new Date(Date.now() - 1245000), billAmount: 45.50 },
-    { id: 3, name: 'Table 03', type: 'Pool', status: 'available' },
-    { id: 4, name: 'Table 04', type: 'Pool', status: 'reserved' },
-    { id: 5, name: 'Table 05', type: 'Carom', status: 'playing', elapsedSeconds: 2847, startTime: new Date(Date.now() - 2847000), billAmount: 98.75 },
-    { id: 6, name: 'Table 06', type: 'Pool', status: 'available' },
-    { id: 7, name: 'Table 07', type: 'Pool', status: 'maintenance' },
-    { id: 8, name: 'Table 08', type: 'Carom', status: 'playing', elapsedSeconds: 567, startTime: new Date(Date.now() - 567000), billAmount: 19.99 },
-    { id: 9, name: 'Table 09', type: 'Pool', status: 'available' },
-    { id: 10, name: 'Table 10', type: 'Pool', status: 'reserved' },
-    { id: 11, name: 'Table 11', type: 'Carom', status: 'available' },
-    { id: 12, name: 'Table 12', type: 'Pool', status: 'playing', elapsedSeconds: 3456, startTime: new Date(Date.now() - 3456000), billAmount: 125.30 },
-  ],
+  tables = DEFAULT_TABLES,
+  onTableClick,
 }) => {
   const [activeTables, setActiveTables] = useState<{ [key: number]: { elapsed: string; bill: number } }>({});
 
@@ -104,7 +108,12 @@ export const TableGrid: React.FC<TableGridProps> = ({
           const statusColor = getStatusColor(table.status);
 
           return (
-            <div key={table.id} className={`table-card status-${statusColor}`}>
+            <div
+              key={table.id}
+              className={`table-card status-${statusColor}`}
+              onClick={() => table.status === 'playing' && onTableClick?.(table)}
+              style={{ cursor: table.status === 'playing' ? 'pointer' : 'default' }}
+            >
               {/* Status Badge */}
               <div className="table-status-badge">
                 <span className={`status-dot status-${statusColor}`}></span>
@@ -140,9 +149,18 @@ export const TableGrid: React.FC<TableGridProps> = ({
               </div>
 
               {/* Action Button */}
-              <button className="table-action-btn" title={`Manage ${table.name}`}>
-                <span>→</span>
-              </button>
+              {table.status === 'playing' && (
+                <button
+                  className="table-action-btn"
+                  title={`Manage ${table.name}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onTableClick?.(table);
+                  }}
+                >
+                  <span>→</span>
+                </button>
+              )}
             </div>
           );
         })}
