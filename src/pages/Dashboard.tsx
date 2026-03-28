@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import MainLayout from '../components/MainLayout';
+import TableGrid from '../components/TableGrid';
 import '../styles/dashboard.css';
 
 interface DashboardProps {
@@ -47,9 +48,15 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLogout = () => {} }) => 
           ))}
         </div>
 
+        {/* Floor Map - Table Grid */}
+        <div className="dashboard-card full-width">
+          <h2>Floor Map - Live Table Status</h2>
+          <TableGrid />
+        </div>
+
         {/* Content Sections */}
         <div className="dashboard-sections">
-          {/* Active Tables Section */}
+          {/* Active Tables Section - Hidden on large screens */}
           <div className="dashboard-card">
             <h2>Active Tables</h2>
             <div className="tables-preview">
