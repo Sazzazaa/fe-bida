@@ -1,56 +1,95 @@
 import { useState } from 'react'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import Dashboard from './pages/Dashboard'
 import './App.css'
 
 function App() {
-  const [currentPage, setCurrentPage] = useState<'login' | 'register'>('login')
+  const [currentPage, setCurrentPage] = useState<'login' | 'register' | 'dashboard'>('login')
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+
+  const handleLogin = () => {
+    setIsAuthenticated(true)
+    setCurrentPage('dashboard')
+  }
+
+  const handleLogout = () => {
+    setIsAuthenticated(false)
+    setCurrentPage('login')
+  }
 
   return (
     <div className="app-container">
-      {currentPage === 'login' && (
+      {/* Auth Pages */}
+      {!isAuthenticated && currentPage === 'login' && (
         <Login />
       )}
-      {currentPage === 'register' && (
+      {!isAuthenticated && currentPage === 'register' && (
         <Register />
       )}
 
-      {/* Simple Navigation */}
-      <nav className="page-nav" style={{ position: 'fixed', top: 10, right: 20, zIndex: 100 }}>
-        <button
-          onClick={() => setCurrentPage('login')}
-          style={{
-            padding: '8px 16px',
-            marginRight: '8px',
-            background: currentPage === 'login' ? 'var(--accent)' : 'var(--bg-secondary)',
-            color: currentPage === 'login' ? 'white' : 'var(--text)',
-            border: 'none',
-            borderRadius: '6px',
-            cursor: 'pointer',
-            fontSize: '14px',
-            fontWeight: '600',
-            transition: 'all 0.2s ease',
-          }}
-        >
-          Login
-        </button>
-        <button
-          onClick={() => setCurrentPage('register')}
-          style={{
-            padding: '8px 16px',
-            background: currentPage === 'register' ? 'var(--accent)' : 'var(--bg-secondary)',
-            color: currentPage === 'register' ? 'white' : 'var(--text)',
-            border: 'none',
-            borderRadius: '6px',
-            cursor: 'pointer',
-            fontSize: '14px',
-            fontWeight: '600',
-            transition: 'all 0.2s ease',
-          }}
-        >
-          Register
-        </button>
-      </nav>
+      {/* Dashboard */}
+      {isAuthenticated && (
+        <Dashboard onLogout={handleLogout} />
+      )}
+
+      {/* Navigation for Auth Pages */}
+      {!isAuthenticated && (
+        <nav className="page-nav" style={{ position: 'fixed', top: 10, right: 20, zIndex: 100 }}>
+          <button
+            onClick={() => setCurrentPage('login')}
+            style={{
+              padding: '8px 16px',
+              marginRight: '8px',
+              background: currentPage === 'login' ? 'var(--accent)' : 'var(--bg-secondary)',
+              color: currentPage === 'login' ? 'white' : 'var(--text)',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '600',
+              transition: 'all 0.2s ease',
+            }}
+          >
+            Login
+          </button>
+          <button
+            onClick={() => setCurrentPage('register')}
+            style={{
+              padding: '8px 16px',
+              background: currentPage === 'register' ? 'var(--accent)' : 'var(--bg-secondary)',
+              color: currentPage === 'register' ? 'white' : 'var(--text)',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '600',
+              transition: 'all 0.2s ease',
+            }}
+          >
+            Register
+          </button>
+          <button
+            onClick={() => {
+              setIsAuthenticated(true)
+              setCurrentPage('dashboard')
+            }}
+            style={{
+              padding: '8px 16px',
+              background: 'var(--success)',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '600',
+              transition: 'all 0.2s ease',
+            }}
+          >
+            Demo Login
+          </button>
+        </nav>
+      )}
     </div>
   )
 }
