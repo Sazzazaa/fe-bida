@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import MainLayout from '../components/MainLayout';
-import TableGrid, { TableData } from '../components/TableGrid';
-import TableActionModal, { OrderedItem } from '../components/TableActionModal';
+import TableGrid from '../components/TableGrid';
 import '../styles/dashboard.css';
 
 interface DashboardProps {
@@ -10,7 +9,6 @@ interface DashboardProps {
 
 export const Dashboard: React.FC<DashboardProps> = ({ onLogout = () => {} }) => {
   const [currentPage, setCurrentPage] = useState('dashboard');
-  const [selectedTable, setSelectedTable] = useState<TableData | null>(null);
 
   const stats = [
     { label: 'Active Tables', value: '8', change: '+2', color: 'blue' },
@@ -18,27 +16,6 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLogout = () => {} }) => 
     { label: 'Orders Today', value: '42', change: '+8', color: 'purple' },
     { label: 'Staff On Duty', value: '6', change: 'All Good', color: 'cyan' },
   ];
-
-  const handleTableClick = (table: TableData) => {
-    setSelectedTable(table);
-  };
-
-  const handleCloseModal = () => {
-    setSelectedTable(null);
-  };
-
-  const handleCheckout = (tableId: number, items: OrderedItem[], total: number) => {
-    console.log(`[Dashboard] Checkout for Table ${tableId}:`, items, 'Total:', total);
-    // In a real app, this would send to the backend
-    alert(`Checkout for ${selectedTable?.name}: $${total.toFixed(2)}`);
-    setSelectedTable(null);
-  };
-
-  const handleSwitchTable = () => {
-    console.log(`[Dashboard] Switch table from ${selectedTable?.name}`);
-    // In a real app, this would show a table selection modal
-    alert('Table switching feature coming soon!');
-  };
 
   return (
     <MainLayout
@@ -74,21 +51,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLogout = () => {} }) => 
         {/* Floor Map - Table Grid */}
         <div className="dashboard-card full-width">
           <h2>Floor Map - Live Table Status</h2>
-          <TableGrid onTableClick={handleTableClick} />
+          <TableGrid />
         </div>
-
-        {/* Table Action Modal */}
-        {selectedTable && (
-          <TableActionModal
-            tableId={selectedTable.id}
-            tableName={selectedTable.name}
-            tableType={selectedTable.type}
-            startTime={selectedTable.startTime || new Date()}
-            onClose={handleCloseModal}
-            onCheckout={handleCheckout}
-            onSwitchTable={handleSwitchTable}
-          />
-        )}
 
         {/* Content Sections */}
         <div className="dashboard-sections">
