@@ -1,24 +1,32 @@
 import { useState } from 'react'
 import '../styles/auth.css'
 
-export default function Register() {
+export default function Register({
+  onRegistered,
+  onSwitchToLogin,
+}: {
+  onRegistered?: () => void
+  onSwitchToLogin?: () => void
+}) {
   const [formData, setFormData] = useState({
-    username: '',
+    fullName: '',
     email: '',
     password: '',
     confirmPassword: '',
+    phone: '',
     agreeTerms: false,
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [apiError, setApiError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
     
-    if (!formData.username) {
-      newErrors.username = 'Username is required'
-    } else if (formData.username.length < 3) {
-      newErrors.username = 'Username must be at least 3 characters'
+    if (!formData.fullName) {
+      newErrors.fullName = 'Full name is required'
+    } else if (formData.fullName.length < 3) {
+      newErrors.fullName = 'Full name must be at least 3 characters'
     }
     
     if (!formData.email) {
@@ -66,20 +74,40 @@ export default function Register() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!validateForm()) return
-    
+
     setIsLoading(true)
-    
-    // Simulate API call
-    setTimeout(() => {
-      console.log('Register attempt:', {
-        username: formData.username,
-        email: formData.email,
+    setApiError('')
+
+    try {
+      const response = await fetch('http://localhost:8080/api/v1/auth/register', {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          fullName: formData.fullName,
+          phone: formData.phone,
+        }),
       })
+
+      if (!response.ok) {
+        const payload = await response.json().catch(() => null)
+        throw new Error(payload?.message || 'Register failed')
+      }
+
+      await response.json()
+      alert('Account created successfully, please login.')
+      onRegistered?.()
+    } catch (err: any) {
+      setApiError(err?.message || 'Unknown error')
+    } finally {
       setIsLoading(false)
-      alert('Account created successfully! (Demo)')
-    }, 1000)
+    }
   }
 
   return (
@@ -109,22 +137,22 @@ export default function Register() {
           </div>
 
           <form onSubmit={handleSubmit} className="auth-form">
-            {/* Username Field */}
+            {/* Full name Field */}
             <div className="form-group">
-              <label htmlFor="username" className="form-label">
-                Username
+              <label htmlFor="fullName" className="form-label">
+                Full name
               </label>
               <input
-                id="username"
+                id="fullName"
                 type="text"
-                name="username"
-                value={formData.username}
+                name="fullName"
+                value={formData.fullName}
                 onChange={handleChange}
-                placeholder="Choose a username"
-                className={`form-input ${errors.username ? 'input-error' : ''}`}
+                placeholder="Full name"
+                className={`form-input ${errors.fullName ? 'input-error' : ''}`}
               />
-              {errors.username && (
-                <span className="error-message">{errors.username}</span>
+              {errors.fullName && (
+                <span className="error-message">{errors.fullName}</span>
               )}
             </div>
 
@@ -145,6 +173,22 @@ export default function Register() {
               {errors.email && (
                 <span className="error-message">{errors.email}</span>
               )}
+            </div>
+
+            {/* Phone Field */}
+            <div className="form-group">
+              <label htmlFor="phone" className="form-label">
+                Phone
+              </label>
+              <input
+                id="phone"
+                type="tel"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                placeholder="e.g. 0901234567"
+                className="form-input"
+              />
             </div>
 
             {/* Password Field */}
@@ -205,6 +249,9 @@ export default function Register() {
               )}
             </div>
 
+            {/* API Error */}
+            {apiError && <p className="error-message">{apiError}</p>}
+
             {/* Submit Button */}
             <button 
               type="submit" 
@@ -219,7 +266,13 @@ export default function Register() {
           <div className="auth-switch">
             <p>
               Already have an account?{' '}
-              <a href="#login">Sign in here</a>
+              <button
+                type="button"
+                className="link-button"
+                onClick={onSwitchToLogin}
+              >
+                Sign in here
+              </button>
             </p>
           </div>
         </div>

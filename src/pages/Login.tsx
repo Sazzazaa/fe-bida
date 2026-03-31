@@ -1,11 +1,18 @@
 import { useState } from 'react'
 import '../styles/auth.css'
 
-export default function Login() {
+export default function Login({
+  onLogin,
+  onSwitchToRegister,
+}: {
+  onLogin?: (name: string) => void
+  onSwitchToRegister?: () => void
+}) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [rememberMe, setRememberMe] = useState(false)
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({})
+  const [apiError, setApiError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
   const validateForm = () => {
@@ -29,18 +36,37 @@ export default function Login() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!validateForm()) return
-    
+
     setIsLoading(true)
-    
-    // Simulate API call
-    setTimeout(() => {
-      console.log('Login attempt:', { email, password, rememberMe })
+    setApiError('')
+
+    try {
+      const response = await fetch('http://localhost:8080/api/v1/auth/login', {
+        method: 'POST',
+        mode: 'cors',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+        body: JSON.stringify({ email, password }),
+      })
+
+      if (!response.ok) {
+        const payload = await response.json().catch(() => null)
+        throw new Error(payload?.message || 'Login failed')
+      }
+
+      const payload = await response.json()
+      localStorage.setItem('accessToken', payload.accessToken || '')
+      onLogin?.(payload.user?.fullName || email)
+    } catch (err: any) {
+      setApiError(err?.message || 'Unknown error')
+    } finally {
       setIsLoading(false)
-      // In a real app, you'd make an API call here
-      alert('Login successful! (Demo)')
-    }, 1000)
+    }
   }
 
   return (
@@ -128,6 +154,9 @@ export default function Login() {
               </a>
             </div>
 
+            {/* API Error */}
+            {apiError && <p className="error-message">{apiError}</p>}
+
             {/* Submit Button */}
             <button 
               type="submit" 
@@ -142,7 +171,13 @@ export default function Login() {
           <div className="auth-switch">
             <p>
               Don&apos;t have an account?{' '}
-              <a href="#register">Create one here</a>
+              <button
+                type="button"
+                className="link-button"
+                onClick={onSwitchToRegister}
+              >
+                Create one here
+              </button>
             </p>
           </div>
         </div>

@@ -17,20 +17,7 @@ interface TableGridProps {
 }
 
 export const TableGrid: React.FC<TableGridProps> = ({
-  tables = [
-    { id: 1, name: 'Table 01', type: 'Pool', status: 'available' },
-    { id: 2, name: 'Table 02', type: 'Carom', status: 'playing', elapsedSeconds: 1245, startTime: new Date(Date.now() - 1245000), billAmount: 45.50 },
-    { id: 3, name: 'Table 03', type: 'Pool', status: 'available' },
-    { id: 4, name: 'Table 04', type: 'Pool', status: 'reserved' },
-    { id: 5, name: 'Table 05', type: 'Carom', status: 'playing', elapsedSeconds: 2847, startTime: new Date(Date.now() - 2847000), billAmount: 98.75 },
-    { id: 6, name: 'Table 06', type: 'Pool', status: 'available' },
-    { id: 7, name: 'Table 07', type: 'Pool', status: 'maintenance' },
-    { id: 8, name: 'Table 08', type: 'Carom', status: 'playing', elapsedSeconds: 567, startTime: new Date(Date.now() - 567000), billAmount: 19.99 },
-    { id: 9, name: 'Table 09', type: 'Pool', status: 'available' },
-    { id: 10, name: 'Table 10', type: 'Pool', status: 'reserved' },
-    { id: 11, name: 'Table 11', type: 'Carom', status: 'available' },
-    { id: 12, name: 'Table 12', type: 'Pool', status: 'playing', elapsedSeconds: 3456, startTime: new Date(Date.now() - 3456000), billAmount: 125.30 },
-  ],
+  tables = [],
 }) => {
   const [activeTables, setActiveTables] = useState<{ [key: number]: { elapsed: string; bill: number } }>({});
 

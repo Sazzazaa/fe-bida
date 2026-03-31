@@ -7,14 +7,31 @@ import './App.css'
 function App() {
   const [currentPage, setCurrentPage] = useState<'login' | 'register' | 'dashboard'>('login')
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [userName, setUserName] = useState('')
 
-  const handleLogin = () => {
+  const handleLogin = (loggedInName: string) => {
+    setUserName(loggedInName)
     setIsAuthenticated(true)
     setCurrentPage('dashboard')
   }
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await fetch('http://localhost:8080/api/v1/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+      })
+    } catch (err) {
+      console.warn('Logout error (ignore if backend not running yet)', err)
+    }
+
+    localStorage.removeItem('accessToken')
     setIsAuthenticated(false)
+    setUserName('')
     setCurrentPage('login')
   }
 
@@ -22,15 +39,25 @@ function App() {
     <div className="app-container">
       {/* Auth Pages */}
       {!isAuthenticated && currentPage === 'login' && (
-        <Login />
+        <Login
+          onLogin={handleLogin}
+          onSwitchToRegister={() => setCurrentPage('register')}
+        />
       )}
       {!isAuthenticated && currentPage === 'register' && (
-        <Register />
+        <Register
+          onRegistered={() => setCurrentPage('login')}
+          onSwitchToLogin={() => setCurrentPage('login')}
+        />
       )}
 
       {/* Dashboard */}
       {isAuthenticated && (
-        <Dashboard onLogout={handleLogout} />
+        <Dashboard
+          onLogout={handleLogout}
+          userName={userName || 'User'}
+          userRole="Staff"
+        />
       )}
 
       {/* Navigation for Auth Pages */}
