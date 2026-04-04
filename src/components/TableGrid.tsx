@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, Zap, AlertCircle } from 'lucide-react';
+import { TABLE_RATE_PER_MINUTE_VND } from '../constants/pricing';
 import '../styles/table-grid.css';
 
 export interface TableData {
@@ -20,8 +21,17 @@ interface TableGridProps {
 
 export const TableGrid: React.FC<TableGridProps> = ({
   tables = [],
+  onTableClick,
 }) => {
   const [activeTables, setActiveTables] = useState<{ [key: number]: { elapsed: string; bill: number } }>({});
+
+  const formatMoney = (amount: number) => (
+    new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+      maximumFractionDigits: 0,
+    }).format(amount)
+  );
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -43,8 +53,8 @@ export const TableGrid: React.FC<TableGridProps> = ({
             ? `${hours}h ${minutes}m`
             : `${minutes}m ${seconds}s`;
 
-          // Calculate bill: table fee ($2/min) + F&B total of the current session
-          const tableFee = (totalSeconds / 60) * 2;
+          // Calculate bill: table fee (VND/min) + F&B total of the current session
+          const tableFee = (totalSeconds / 60) * TABLE_RATE_PER_MINUTE_VND;
           const fnbAmount = table.fnbAmount ?? 0;
 
           updated[table.id] = {
@@ -136,7 +146,7 @@ export const TableGrid: React.FC<TableGridProps> = ({
                     </div>
                     <div className="bill-display">
                       <Zap size={16} />
-                      <span className="bill-amount">${tableTimer.bill.toFixed(2)}</span>
+                      <span className="bill-amount">{formatMoney(tableTimer.bill)}</span>
                     </div>
                   </div>
                 )}

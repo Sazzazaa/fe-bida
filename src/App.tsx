@@ -8,11 +8,6 @@ function App() {
   const [currentPage, setCurrentPage] = useState<'login' | 'register' | 'dashboard'>('login')
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
-  const handleLogin = () => {
-    setIsAuthenticated(true)
-    setCurrentPage('dashboard')
-  }
-
   const handleLogout = () => {
     setIsAuthenticated(false)
     setCurrentPage('login')

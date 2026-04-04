@@ -1,0 +1,1 @@
+export const TABLE_RATE_PER_MINUTE_VND = 2000;
