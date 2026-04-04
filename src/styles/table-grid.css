@@ -9,6 +9,16 @@
   width: 100%;
 }
 
+.table-grid-empty {
+  grid-column: 1 / -1;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  color: var(--text);
+  background: var(--bg);
+}
+
 /* Table Card */
 .table-card {
   position: relative;
