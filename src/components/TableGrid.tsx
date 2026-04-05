@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, Zap, AlertCircle } from 'lucide-react';
+import TableActionModal from './TableActionModal';
 import '../styles/table-grid.css';
 
 export interface TableData {
@@ -33,6 +34,8 @@ export const TableGrid: React.FC<TableGridProps> = ({
   ],
 }) => {
   const [activeTables, setActiveTables] = useState<{ [key: number]: { elapsed: string; bill: number } }>({});
+  const [selectedTable, setSelectedTable] = useState<TableData | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -97,57 +100,89 @@ export const TableGrid: React.FC<TableGridProps> = ({
   };
 
   return (
-    <div className="table-grid-container">
-      <div className="table-grid">
-        {tables.map((table) => {
-          const tableTimer = activeTables[table.id];
-          const statusColor = getStatusColor(table.status);
+    <>
+      <div className="table-grid-container">
+        <div className="table-grid">
+          {tables.map((table) => {
+            const tableTimer = activeTables[table.id];
+            const statusColor = getStatusColor(table.status);
 
-          return (
-            <div key={table.id} className={`table-card status-${statusColor}`}>
-              {/* Status Badge */}
-              <div className="table-status-badge">
-                <span className={`status-dot status-${statusColor}`}></span>
-                <span className="status-text">{getStatusLabel(table.status)}</span>
-              </div>
+            return (
+              <div key={table.id} className={`table-card status-${statusColor}`}>
+                {/* Status Badge */}
+                <div className="table-status-badge">
+                  <span className={`status-dot status-${statusColor}`}></span>
+                  <span className="status-text">{getStatusLabel(table.status)}</span>
+                </div>
 
-              {/* Card Content */}
-              <div className="table-card-content">
-                <h3 className="table-name">{table.name}</h3>
-                <p className="table-type">{table.type}</p>
+                {/* Card Content */}
+                <div className="table-card-content">
+                  <h3 className="table-name">{table.name}</h3>
+                  <p className="table-type">{table.type}</p>
 
-                {/* Live Timer for Playing Tables */}
-                {table.status === 'playing' && tableTimer && (
-                  <div className="table-timer">
-                    <div className="timer-display">
-                      <Clock size={16} />
-                      <span className="timer-text">{tableTimer.elapsed}</span>
+                  {/* Live Timer for Playing Tables */}
+                  {table.status === 'playing' && tableTimer && (
+                    <div className="table-timer">
+                      <div className="timer-display">
+                        <Clock size={16} />
+                        <span className="timer-text">{tableTimer.elapsed}</span>
+                      </div>
+                      <div className="bill-display">
+                        <Zap size={16} />
+                        <span className="bill-amount">${tableTimer.bill.toFixed(2)}</span>
+                      </div>
                     </div>
-                    <div className="bill-display">
-                      <Zap size={16} />
-                      <span className="bill-amount">${tableTimer.bill.toFixed(2)}</span>
+                  )}
+
+                  {/* Maintenance Alert */}
+                  {table.status === 'maintenance' && (
+                    <div className="maintenance-alert">
+                      <AlertCircle size={16} />
+                      <span>Under Maintenance</span>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
 
-                {/* Maintenance Alert */}
-                {table.status === 'maintenance' && (
-                  <div className="maintenance-alert">
-                    <AlertCircle size={16} />
-                    <span>Under Maintenance</span>
-                  </div>
-                )}
+                {/* Action Button */}
+                <button
+                  className="table-action-btn"
+                  title={`Manage ${table.name}`}
+                  onClick={() => {
+                    setSelectedTable(table);
+                    setIsModalOpen(true);
+                  }}
+                >
+                  <span>→</span>
+                </button>
               </div>
-
-              {/* Action Button */}
-              <button className="table-action-btn" title={`Manage ${table.name}`}>
-                <span>→</span>
-              </button>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
-    </div>
+
+      {selectedTable && (
+        <TableActionModal
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false);
+            setSelectedTable(null);
+          }}
+          tableId={selectedTable.id}
+          tableName={selectedTable.name}
+          tableStatus={selectedTable.status}
+          elapsedTime={activeTables[selectedTable.id]?.elapsed}
+          billAmount={activeTables[selectedTable.id]?.bill || selectedTable.billAmount}
+          onCheckout={() => {
+            console.log('Checkout for', selectedTable.name);
+            setIsModalOpen(false);
+            setSelectedTable(null);
+          }}
+          onSwitchTable={() => {
+            console.log('Switch table');
+          }}
+        />
+      )}
+    </>
   );
 };
 

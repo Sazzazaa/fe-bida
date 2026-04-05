@@ -2,10 +2,13 @@ import { useState } from 'react'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
+import FBManagement from './pages/FBManagement'
+import TableManagement from './pages/TableManagement'
+import RevenueAnalytics from './pages/RevenueAnalytics'
 import './App.css'
 
 function App() {
-  const [currentPage, setCurrentPage] = useState<'login' | 'register' | 'dashboard'>('login')
+  const [currentPage, setCurrentPage] = useState<'login' | 'register' | 'dashboard' | 'fb-management' | 'table-management' | 'revenue-reports'>('login')
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   const handleLogin = () => {
@@ -16,6 +19,10 @@ function App() {
   const handleLogout = () => {
     setIsAuthenticated(false)
     setCurrentPage('login')
+  }
+
+  const handleNavigate = (page: string) => {
+    setCurrentPage(page as any)
   }
 
   return (
@@ -29,8 +36,23 @@ function App() {
       )}
 
       {/* Dashboard */}
-      {isAuthenticated && (
-        <Dashboard onLogout={handleLogout} />
+      {isAuthenticated && currentPage === 'dashboard' && (
+        <Dashboard onLogout={handleLogout} onNavigate={handleNavigate} />
+      )}
+
+      {/* F&B Management Page */}
+      {isAuthenticated && currentPage === 'fb-management' && (
+        <FBManagement onLogout={handleLogout} onNavigate={handleNavigate} />
+      )}
+
+      {/* Table Management Page */}
+      {isAuthenticated && currentPage === 'table-management' && (
+        <TableManagement onLogout={handleLogout} onNavigate={handleNavigate} />
+      )}
+
+      {/* Revenue Analytics Page */}
+      {isAuthenticated && currentPage === 'revenue-reports' && (
+        <RevenueAnalytics onLogout={handleLogout} onNavigate={handleNavigate} />
       )}
 
       {/* Navigation for Auth Pages */}

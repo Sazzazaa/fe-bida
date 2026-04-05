@@ -5,10 +5,10 @@ import '../styles/dashboard.css';
 
 interface DashboardProps {
   onLogout?: () => void;
+  onNavigate?: (page: string) => void;
 }
 
-export const Dashboard: React.FC<DashboardProps> = ({ onLogout = () => {} }) => {
-  const [currentPage, setCurrentPage] = useState('dashboard');
+export const Dashboard: React.FC<DashboardProps> = ({ onLogout = () => {}, onNavigate = () => {} }) => {
 
   const stats = [
     { label: 'Active Tables', value: '8', change: '+2', color: 'blue' },
@@ -19,8 +19,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLogout = () => {} }) => 
 
   return (
     <MainLayout
-      currentPage={currentPage}
-      onNavigate={setCurrentPage}
+      currentPage="dashboard"
+      onNavigate={onNavigate}
       onLogout={onLogout}
       userName="John Doe"
       userRole="Floor Manager"

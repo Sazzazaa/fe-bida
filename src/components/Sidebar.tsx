@@ -28,6 +28,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { id: 'revenue-reports', label: 'Revenue Reports', icon: BarChart3 },
   ];
 
+  // Map navigation IDs to page comparison values for highlighting
+  const getPageId = (navId: string): string => {
+    const pageMap: Record<string, string> = {
+      'dashboard': 'dashboard',
+      'table-management': 'tablemanagement',
+      'fb-management': 'fbmanagement',
+      'revenue-reports': 'analytics',
+    };
+    return pageMap[navId] || navId;
+  };
+
   const handleNavigate = (itemId: string) => {
     onNavigate(itemId);
   };
@@ -77,7 +88,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <nav className="sidebar-nav">
           {navItems.map((item) => {
             const IconComponent = item.icon;
-            const isActive = currentPage === item.id;
+            const isActive = currentPage === item.id || currentPage === getPageId(item.id);
 
             return (
               <button
