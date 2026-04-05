@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from 'react';
+import React, { type ReactNode } from 'react';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import '../styles/layout.css';

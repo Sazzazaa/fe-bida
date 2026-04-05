@@ -26,7 +26,6 @@ interface TableActionModalProps {
 export const TableActionModal: React.FC<TableActionModalProps> = ({
   isOpen,
   onClose,
-  tableId,
   tableName,
   tableStatus,
   elapsedTime,

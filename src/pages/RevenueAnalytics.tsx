@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid,
-  Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell
+  Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
 import { Calendar } from 'lucide-react';
 import MainLayout from '../components/MainLayout';
@@ -86,7 +86,6 @@ export const RevenueAnalytics: React.FC<{ onNavigate?: (page: string) => void; o
   const totalRevenue = revenueData.reduce((sum, d) => sum + d.revenue, 0);
   const totalSessions = revenueData.reduce((sum, d) => sum + d.sessions, 0);
   const avgSessionRevenue = (totalRevenue / totalSessions).toFixed(2);
-  const bestSession = Math.max(...revenueData.map(d => d.revenue));
 
   const stats = [
     { label: 'Total Revenue', value: `$${totalRevenue.toFixed(2)}`, change: '+18%', icon: '💰' },

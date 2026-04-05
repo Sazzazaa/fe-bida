@@ -29,10 +29,10 @@ function App() {
     <div className="app-container">
       {/* Auth Pages */}
       {!isAuthenticated && currentPage === 'login' && (
-        <Login onLogin={handleLogin} onSwitchPage={setCurrentPage} />
+        <Login onLogin={handleLogin} onSwitchPage={(page) => setCurrentPage(page as any)} />
       )}
       {!isAuthenticated && currentPage === 'register' && (
-        <Register onLogin={handleLogin} onSwitchPage={setCurrentPage} />
+        <Register onLogin={handleLogin} onSwitchPage={(page) => setCurrentPage(page as any)} />
       )}
 
       {/* Dashboard */}
