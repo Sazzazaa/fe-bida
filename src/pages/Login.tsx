@@ -1,7 +1,12 @@
 import { useState } from 'react'
 import '../styles/auth.css'
 
-export default function Login() {
+interface LoginProps {
+  onLogin?: () => void;
+  onSwitchPage?: (page: string) => void;
+}
+
+export default function Login({ onLogin = () => {}, onSwitchPage = () => {} }: LoginProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [rememberMe, setRememberMe] = useState(false)
@@ -38,8 +43,8 @@ export default function Login() {
     setTimeout(() => {
       console.log('Login attempt:', { email, password, rememberMe })
       setIsLoading(false)
-      // In a real app, you'd make an API call here
-      alert('Login successful! (Demo)')
+      // Call the onLogin callback to authenticate
+      onLogin()
     }, 1000)
   }
 
@@ -142,7 +147,7 @@ export default function Login() {
           <div className="auth-switch">
             <p>
               Don&apos;t have an account?{' '}
-              <a href="#register">Create one here</a>
+              <a href="#register" onClick={(e) => { e.preventDefault(); onSwitchPage('register'); }}>Create one here</a>
             </p>
           </div>
         </div>

@@ -1,7 +1,12 @@
 import { useState } from 'react'
 import '../styles/auth.css'
 
-export default function Register() {
+interface RegisterProps {
+  onLogin?: () => void;
+  onSwitchPage?: (page: string) => void;
+}
+
+export default function Register({ onLogin = () => {}, onSwitchPage = () => {} }: RegisterProps) {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -78,7 +83,8 @@ export default function Register() {
         email: formData.email,
       })
       setIsLoading(false)
-      alert('Account created successfully! (Demo)')
+      // Call the onLogin callback to authenticate after registration
+      onLogin()
     }, 1000)
   }
 
@@ -219,7 +225,7 @@ export default function Register() {
           <div className="auth-switch">
             <p>
               Already have an account?{' '}
-              <a href="#login">Sign in here</a>
+              <a href="#login" onClick={(e) => { e.preventDefault(); onSwitchPage('login'); }}>Sign in here</a>
             </p>
           </div>
         </div>
