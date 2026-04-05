@@ -11,7 +11,10 @@ function App() {
   const [currentPage, setCurrentPage] = useState<'login' | 'register' | 'dashboard' | 'fb-management' | 'table-management' | 'revenue-reports'>('login')
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
+  console.log("[v0] App rendered - currentPage:", currentPage, "isAuthenticated:", isAuthenticated)
+
   const handleLogin = () => {
+    console.log("[v0] handleLogin called")
     setIsAuthenticated(true)
     setCurrentPage('dashboard')
   }

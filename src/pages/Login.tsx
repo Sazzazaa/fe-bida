@@ -7,6 +7,7 @@ interface LoginProps {
 }
 
 export default function Login({ onLogin = () => {}, onSwitchPage = () => {} }: LoginProps) {
+  console.log("[v0] Login component rendering")
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [rememberMe, setRememberMe] = useState(false)
